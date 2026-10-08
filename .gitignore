@@ -1,0 +1,6 @@
+node_modules
+shots
+v2-*.md
+gen-page.cjs
+package-lock.json
+*.png

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where should your Custom GPT go?</title>
+<meta name="description" content="Five questions to narrow down where to move a Custom GPT, using only what each vendor's own pages say. A snapshot from October 8, 2026.">
+<style>
+:root{
+  --stone:#FDFFF2;--evergreen:#23392F;--forest:#192520;--highlight:#F0FE91;--sage:#9EAF9F;
+  --shadow:rgba(25,37,32,.35);
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --u:1.13cqw;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--forest)}
+button{font-family:inherit}
+.g{display:inline-grid;place-items:center;flex:none;width:2.1cqw;height:2.1cqw;min-width:14px;min-height:14px;border-radius:50%;font:700 max(9px,1.25cqw)/1 var(--sans)}
+.g.ok{background:var(--evergreen);color:var(--stone)}
+.g.cf{background:var(--sage);color:var(--forest)}
+.g.nf{background:var(--forest);color:var(--highlight)}
+
+/* The 16:9 stage. Everything inside is sized in cqw. */
+#stage{container-type:inline-size;width:min(100vw,177.7778vh);aspect-ratio:16/9;background:var(--evergreen);padding:calc(var(--u)*2);display:flex;flex-direction:column;gap:calc(var(--u)*1.5);overflow:hidden}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:var(--u);flex:none;height:calc(var(--u)*3.5)}
+.bar .step{font:500 max(10.5px,1.55cqw)/1 var(--sans);color:var(--stone);letter-spacing:.02em}
+.bar .acts{display:flex;gap:var(--u)}
+.lnk{appearance:none;background:transparent;border:.2cqw solid var(--sage);color:var(--stone);border-radius:999px;font:400 max(10.5px,1.5cqw)/1 var(--sans);height:calc(var(--u)*3.2);padding:0 calc(var(--u)*1.5);cursor:pointer;white-space:nowrap;transition:background-color .15s ease}
+.lnk:hover{background:var(--forest)}
+.lnk:focus-visible,.opt:focus-visible,.pill:focus-visible{outline:.3cqw solid var(--highlight);outline-offset:.25cqw}
+.card{flex:1;min-height:0;background:var(--stone);border-radius:calc(var(--u)*2);padding:calc(var(--u)*2) calc(var(--u)*2.5);box-shadow:0 calc(var(--u)*.5) 0 var(--shadow);display:flex;flex-direction:column}
+#panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:calc(var(--u)*1.5)}
+.q{font:400 3.3cqw/1.15 var(--serif);color:var(--evergreen);letter-spacing:-.02em;flex:none}
+.opts{display:flex;flex-direction:column;gap:var(--u)}
+.opt{appearance:none;text-align:left;background:var(--stone);color:var(--evergreen);border:.25cqw solid var(--evergreen);border-radius:calc(var(--u)*1.5);height:calc(var(--u)*4.6);padding:0 calc(var(--u)*2);font:400 max(11.5px,1.9cqw)/1 var(--sans);cursor:pointer;transition:background-color .15s ease}
+.opt:hover{background:var(--sage)}
+.opt[aria-pressed="true"]{background:var(--highlight);border-color:var(--forest);color:var(--forest);font-weight:600}
+.foot{flex:none;display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*2);min-height:calc(var(--u)*2.4)}
+.foot .disc{font:400 max(9px,1.12cqw)/1.25 var(--sans);color:var(--sage)}
+.foot a{font:500 max(10px,1.3cqw)/1 var(--sans);color:var(--highlight);white-space:nowrap}
+.foot .sm{display:none}
+
+/* Results */
+.pills{display:flex;flex-wrap:wrap;gap:calc(var(--u)*.8);flex:none}
+.pill{appearance:none;font:400 max(10.5px,1.5cqw)/1 var(--sans);color:var(--evergreen);background:transparent;border:.2cqw solid var(--evergreen);border-radius:999px;height:calc(var(--u)*3);padding:0 calc(var(--u)*1.4);cursor:pointer;white-space:nowrap;transition:background-color .15s ease}
+.pill:hover{background:var(--sage)}
+.pill[aria-selected="true"]{background:var(--highlight);border-color:var(--forest);color:var(--forest);font-weight:600}
+.head{display:flex;align-items:baseline;gap:calc(var(--u)*1.2);flex:none;min-width:0}
+.name{font:400 3.6cqw/1 var(--serif);color:var(--evergreen);letter-spacing:-.025em;white-space:nowrap}
+.start{font:400 max(10.5px,1.5cqw)/1.2 var(--sans);color:var(--evergreen);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rows{display:flex;flex-direction:column;gap:calc(var(--u)*.7);flex:none}
+.row{display:grid;grid-template-columns:2.1cqw 19.5cqw 1fr;align-items:center;gap:calc(var(--u)*1.1);min-height:calc(var(--u)*3)}
+.row .k{font:500 max(10.5px,1.5cqw)/1.15 var(--sans);color:var(--evergreen)}
+.row .v{font:400 max(10.5px,1.55cqw)/1.15 var(--sans);color:var(--forest)}
+.notes{font:400 max(10px,1.4cqw)/1.25 var(--sans);color:var(--evergreen);flex:none;border-top:.2cqw solid var(--sage);padding-top:calc(var(--u)*.8)}
+.list{display:flex;flex-direction:column;gap:calc(var(--u)*.8)}
+.li{display:grid;grid-template-columns:15cqw 1fr;gap:calc(var(--u)*1.2);font:400 max(10.5px,1.5cqw)/1.2 var(--sans);color:var(--forest)}
+.li b{font-weight:600;color:var(--evergreen)}
+.none{font:400 max(11px,1.7cqw)/1.3 var(--sans);color:var(--forest);flex:none}
+
+@container (max-width:560px){
+  #stage{padding:2.4cqw;gap:1.6cqw}
+  .q{font-size:4.6cqw}
+  .opt{height:6.2cqw;font-size:max(10.5px,2.5cqw);padding:0 2.4cqw;border-radius:2cqw}
+  .opts{gap:1.2cqw}
+  .card{padding:2.4cqw 3cqw;border-radius:2.6cqw;box-shadow:none}
+  .bar{height:5cqw}
+  .lnk{height:4.6cqw;font-size:max(10px,2.3cqw);padding:0 2cqw}
+  .bar .step{font-size:max(10px,2.4cqw)}
+  .name{font-size:5cqw}
+  .start,.rows .row:nth-child(n+4),.row .k{display:none}
+  .row{grid-template-columns:3.4cqw 1fr}
+  .row .v{font-size:max(10px,2.5cqw)}
+  .pill{height:4.4cqw;font-size:max(10px,2.3cqw);padding:0 2cqw}
+  .g{width:3.2cqw;height:3.2cqw;min-width:11px;min-height:11px;font-size:7px}
+  .notes{display:none}
+  .foot .disc{display:none}
+  .foot .sm{display:block;font:400 max(9px,2.2cqw)/1.2 var(--sans);color:var(--sage)}
+  .li{grid-template-columns:1fr;gap:0;font-size:max(10px,2.4cqw)}
+  .li span{display:none}
+}
+@media (prefers-reduced-motion:reduce){.lnk,.opt,.pill{transition:none}}
+
+/*__FULLCSS__*/
+</style>
+</head>
+<body>
+<!--__TOP__-->
+<main id="stage" aria-label="Where should your Custom GPT go? Five questions.">
+  <div class="bar"><span class="step" id="step"></span><span class="acts" id="acts"></span></div>
+  <section class="card" id="card"><div id="panel" aria-live="polite"></div></section>
+  <div class="foot"><span class="disc">Exploratory snapshot of public vendor pages, October 8, 2026. Not advice. Check each vendor's current pages and contract yourself.</span><span class="sm">Snapshot of October 8, 2026. Verify before you rely on it.</span><!--__FOOTLINK__--></div>
+</main>
+<!--__BOTTOM__-->
+<script>
+/*__FINDER__*/
+</script>
+<script>
+(function(){
+var F=window.Finder,st={a:{},step:0,view:"q",sel:0};
+var panel=document.getElementById("panel"),stepEl=document.getElementById("step"),acts=document.getElementById("acts");
+var GL={ok:"✓",cf:"~",nf:"?"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function glyph(s){return '<i class="g '+s+'" aria-hidden="true">'+GL[s]+'</i>'}
+function label(s){return s==="ok"?"Confirmed":s==="cf"?"Partly stated or pages differ":"Not found"}
+function btn(id,txt){return '<button class="lnk" id="'+id+'" type="button">'+txt+'</button>'}
+function reset(){st.a={};st.step=0;st.view="q";st.sel=0;render()}
+function pick(k,v){
+  st.a[k]=v;
+  if(k==="who"&&v!=="clients"&&v!=="own")delete st.a.signin;
+  var steps=F.stepsFor(st.a);
+  if(st.step<steps.length-1){st.step++;st.view="q"}else{st.view="r";st.sel=0}
+  render();
+}
+function resultFor(){return F.run(st.a)}
+function render(){
+  var steps=F.stepsFor(st.a),h="",a="",s="";
+  if(st.view==="q"){
+    var k=steps[st.step],Q=F.QUESTIONS[k];
+    s=st.step===0?"Question 1":"Question "+(st.step+1)+" of "+steps.length;
+    a=(st.step>0?btn("back","Back"):"")+btn("reset","Start over");
+    h='<h2 class="q">'+esc(Q.q)+'</h2><div class="opts">'+Q.opts.map(function(o){return '<button class="opt" type="button" data-k="'+k+'" data-v="'+o[0]+'" aria-pressed="'+(st.a[k]===o[0])+'">'+esc(o[1])+'</button>'}).join("")+'</div>';
+  }else{
+    var R=resultFor(),n=R.survivors.length;
+    if(st.view==="why"){
+      s=n?"Why the others are out":"What to ask in writing";
+      a=btn("backr","Back")+btn("reset","Start over");
+      if(n){
+        h='<div class="list">'+R.dropped.map(function(r){return '<div class="li"><b>'+esc(r.o.tab)+'</b><span>'+esc(r.fails[0].why)+(r.fails.length>1?' (+'+(r.fails.length-1)+' more)':'')+'</span></div>'}).join("")+'</div>';
+      }else{
+        h='<div class="none">Closest by gates passed. Send these to the vendor and ask for the answer in writing.</div><div class="list">'+R.closest.map(function(c){return '<div class="li"><b>'+esc(c.o.tab)+'</b><span>'+esc(c.asks[0])+'</span></div>'}).join("")+'</div>';
+      }
+    }else if(n){
+      var o=R.survivors[Math.min(st.sel,n-1)];
+      s=n+" of "+F.OPTIONS.length+" options still fit";
+      a=btn("why","Why not the others")+btn("reset","Start over");
+      var keys=["training","ownership","certs","hipaa","access"];
+      var notes=[];
+      if(R.unsure)notes.push("Not sure about health information, so this treats it as yes.");
+      if(st.a.signin==="yes"&&o.signin)notes.push("Sign-in: "+o.signin.plan+".");
+      if(st.a.voice==="yes"&&o.voice)notes.push("Voice: "+o.voice.plan+".");
+      h='<div class="pills" role="tablist" aria-label="Options that fit">'+R.survivors.map(function(x,i){return '<button class="pill" role="tab" type="button" data-i="'+i+'" aria-selected="'+(i===Math.min(st.sel,n-1))+'">'+esc(x.tab)+'</button>'}).join("")+'</div>'+
+        '<div class="head"><div class="name">'+esc(o.name)+'</div><div class="start">'+esc(o.start)+'</div></div>'+
+        '<div class="rows">'+keys.map(function(kk){var fl=o.fields[kk],fd=F.FIELDS.filter(function(x){return x.k===kk})[0];return '<div class="row">'+glyph(fl.s)+'<span class="k">'+esc(fd.label)+'</span><span class="v">'+esc(fl.short)+'</span></div>'}).join("")+'</div>'+
+        (notes.length?'<div class="notes">'+esc(notes.join(" "))+'</div>':'');
+    }else{
+      s="No option fits all your answers";
+      a=btn("why","What to ask")+btn("backq","Change answers")+btn("reset","Start over");
+      h='<div class="none">None of the seven confirm everything you asked for on their own pages. A gap means the pages do not say, so change an answer or ask the vendor in writing.</div><div class="list">'+R.closest.map(function(c){return '<div class="li"><b>'+esc(c.o.tab)+'</b><span>'+esc(c.fails[0].why)+'</span></div>'}).join("")+'</div>';
+    }
+  }
+  stepEl.textContent=s;acts.innerHTML=a;panel.innerHTML=h;
+  bind();
+  if(window.onFinderRender)window.onFinderRender(st);
+}
+function on(id,fn){var e=document.getElementById(id);if(e)e.addEventListener("click",fn)}
+function bind(){
+  on("reset",reset);
+  on("back",function(){st.step=Math.max(0,st.step-1);st.view="q";render()});
+  on("why",function(){st.view="why";render()});
+  on("backr",function(){st.view="r";render()});
+  on("backq",function(){st.view="q";st.step=0;render()});
+  Array.prototype.forEach.call(panel.querySelectorAll(".opt"),function(b){b.addEventListener("click",function(){pick(b.getAttribute("data-k"),b.getAttribute("data-v"))})});
+  Array.prototype.forEach.call(panel.querySelectorAll(".pill"),function(b,i){
+    b.addEventListener("click",function(){st.sel=i;render()});
+    b.addEventListener("keydown",function(e){var m=panel.querySelectorAll(".pill").length,n=i;if(e.key==="ArrowRight")n=(i+1)%m;else if(e.key==="ArrowLeft")n=(i+m-1)%m;else return;e.preventDefault();st.sel=n;render();panel.querySelectorAll(".pill")[n].focus()});
+  });
+}
+window.FinderUI={reset:reset};
+render();
+})();
+</script>
+<!--__FULLJS__-->
+</body>
+</html>

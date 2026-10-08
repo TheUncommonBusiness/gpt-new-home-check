@@ -1,0 +1,197 @@
+/* Data and logic for the "Where should your GPT go" check.
+   Every cell comes from a vendor's own public page, read on 2026-10-08.
+   s = status: "ok" confirmed, "cf" partly stated or the vendor's pages disagree, "nf" not found.
+   Nothing here is scored. A "nf" never counts for or against an option, it only fails a gate that needs a confirmed fact. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory();
+  else root.Finder = factory();
+})(this, function () {
+  var CHECKED = "October 8, 2026";
+
+  var FIELDS = [
+    { k: "training", label: "Training on your data" },
+    { k: "ownership", label: "Who owns it" },
+    { k: "retention", label: "Keeping, deleting, exporting" },
+    { k: "certs", label: "Security attestations" },
+    { k: "hipaa", label: "HIPAA and BAA" },
+    { k: "access", label: "Who can use it" },
+    { k: "where", label: "Where data lives" },
+    { k: "plans", label: "Plans and price" }
+  ];
+
+  function f(s, short, t, u) { return { s: s, short: short, t: t, u: u }; }
+
+  var OPTIONS = [
+    {
+      id: "plugin", tab: "Plugin", name: "ChatGPT plugin", by: "OpenAI",
+      start: "No separate fee listed", price: 0,
+      who: { me: [true], team: [true], clients: [false, "Starts private. Making it public takes a separate submission."], own: [false, "Not a build-your-own option."] },
+      signin: null, voice: null,
+      fields: {
+        training: f("ok", "Off by default on business plans, on for personal", "Business, Enterprise, Edu, Healthcare and API content is not used for training by default. Free, Plus and Pro content is used unless you switch off \"Improve the model for everyone\". Apps: not trained on by default.", "https://openai.com/enterprise-privacy/"),
+        ownership: f("ok", "You keep inputs and own outputs", "You keep all rights to your inputs and own the output you rightfully receive. On business plans OpenAI takes only the rights needed to provide the service. Consumer terms let it use content to improve its services.", "https://openai.com/enterprise-privacy/"),
+        retention: f("cf", "Deleted chats go within 30 days. No self-serve export on Business", "Deleted conversations leave OpenAI's systems within 30 days. Enterprise admins set retention. Self-service export is not available for Business, Enterprise or Healthcare workspaces. Free, Plus and Pro can export their own history.", "https://help.openai.com/en/articles/7730893"),
+        certs: f("ok", "SOC 2 Type 2 and ISO 27001 listed", "Its Trust Portal lists SOC 2 Type 2, SOC 3, ISO/IEC 27001:2022 and 42001, GDPR and CCPA, and a DPA is available. No page ties plugins to the SOC 2 scope.", "https://trust.openai.com/"),
+        hipaa: f("ok", "BAA only on Healthcare or Enterprise Regulated Workspace", "A BAA covers ChatGPT for Healthcare, ChatGPT for Enterprise with Regulated Workspace, FedRAMP, Clinicians and the API with Modified Retention. Business, Edu, Plus and Pro are not on the list. A feature being available does not by itself mean a use or connected app is covered.", "https://help.openai.com/en/articles/20001069"),
+        access: f("ok", "Private first, share with invited people", "A migrated plugin starts private. You can share with invited people, or on workspace plans with anyone who has the link. Making it public takes a separate submission process.", "https://help.openai.com/en/articles/20001519"),
+        where: f("nf", "Region list and sub-processor list not read", "Data residency applies only to workspaces that configure it, and only to content stored at rest. The sub-processor list sits on the Trust Portal and was not opened.", "https://help.openai.com/en/articles/11509118"),
+        plans: f("ok", "No separate fee listed. Access varies by account", "OpenAI's FAQ lists no separate fee for plugins. Access varies by account and workspace, and in Enterprise sharing and publishing need separate permissions.", "https://help.openai.com/en/articles/20001519")
+      }
+    },
+    {
+      id: "claude", tab: "Claude", name: "Claude Project", by: "Anthropic",
+      start: "Free, Team from $20 a seat", price: 0,
+      who: { me: [true], team: [true], clients: [false, "Anthropic's pages list sharing only with members of your organization."], own: [false, "Not a build-your-own option."] },
+      signin: null, voice: null,
+      fields: {
+        training: f("cf", "Off on Team and Enterprise. Free, Pro, Max pages differ", "Team, Enterprise and API content is not used for training by default. For Free, Pro and Max, the privacy page says chats are used only if you allow it, while the Consumer Terms say they are used unless you opt out. Neither page mentions project files.", "https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training"),
+        ownership: f("ok", "You keep inputs and own outputs", "Commercial terms: you keep all rights to your inputs and own your outputs. Consumer terms: you keep your rights in your inputs.", "https://www.anthropic.com/legal/commercial-terms"),
+        retention: f("cf", "Deleted chats go within 30 days. Project files not addressed", "Deleted chats leave back-end storage within 30 days, and up to 5 years if model improvement is on. Enterprise can set custom retention for chats and projects. Deleting project files and exporting a project: not found.", "https://privacy.claude.com/en/articles/10023548-how-long-do-you-store-my-data"),
+        certs: f("ok", "SOC 2 and ISO 27001 listed on its privacy site", "Its privacy article lists SOC 2 Type I and II, ISO 27001:2022 and ISO/IEC 42001:2023 for commercial products. The Trust Center page did not load, so this is one page.", "https://privacy.claude.com/en/articles/10015870-what-certifications-has-anthropic-obtained"),
+        hipaa: f("ok", "BAA on Enterprise only, after an owner turns it on", "Anthropic's BAA lists Projects as covered on Claude Enterprise once a Primary Owner activates it. It excludes Free, Pro and Max. The page does not mention the Team plan.", "https://support.claude.com/en/articles/8114513-business-associate-agreements-baa-for-commercial-customers"),
+        access: f("ok", "Your organization's members, on Team or Enterprise", "Projects share with members of your organization, with view or edit access, on Team and Enterprise. Free accounts can make up to 5 projects but cannot share. Outside guests: not found.", "https://support.claude.com/en/articles/9519189-project-visibility-and-sharing"),
+        where: f("cf", "Stored in the US. Sub-processor list not opened", "Anthropic says commercial data is stored in the US and that it uses several cloud providers listed on a sub-processor page. That list was not opened.", "https://privacy.claude.com/en/articles/7996890-where-are-your-servers-located-do-you-host-your-models-on-eu-servers"),
+        plans: f("ok", "Free (5 projects), Pro $17, Team $20 a seat", "Free: up to 5 projects, no sharing. Pro: $17 a month billed annually ($20 monthly). Team: $20 a seat a month billed annually ($25 monthly), 2 to 150 seats, includes project sharing.", "https://claude.com/pricing")
+      }
+    },
+    {
+      id: "delphi", tab: "Delphi", name: "Delphi", by: "Delphi AI Inc.",
+      start: "Free, then $79 a month", price: 0,
+      who: { me: [true], team: [true], clients: [true], own: [false, "Not a build-your-own option."] },
+      signin: { plan: "Access Groups and email sign-in, plan not stated" },
+      voice: { plan: "Voice calling and chat are listed on every plan" },
+      fields: {
+        training: f("cf", "Your content not used. Clients' chats not found", "Delphi's help article says creator content is kept in a private index and is not used to train external models. Its biometric page says your face and voice data improve Delphi's own models. Training on your clients' chats: not found.", "https://help.delphi.ai/articles/16043440-data-privacy-security"),
+        ownership: f("cf", "You keep your rights. Delphi gets a broad license", "You keep all rights in your content. Delphi takes a worldwide, sublicensable license to use, copy, modify and commercialize it to provide the service, and can show your mind on public pages. Output ownership: not found.", "https://www.delphi.co/terms-creator"),
+        retention: f("cf", "Content kept 6 months after you end it, if you ask", "After you terminate, you can ask Delphi to keep your content for six months, otherwise it deletes it. You cannot export audience lists directly. Export of content or chats: not found.", "https://www.delphi.co/terms-creator"),
+        certs: f("nf", "None found", "No SOC 2 or ISO attestation appears on the pages read. The help article lists yearly penetration tests.", "https://help.delphi.ai/articles/16043440-data-privacy-security"),
+        hipaa: f("nf", "Not found", "The word HIPAA appears on no Delphi page read, and no BAA is mentioned. Its privacy policy says chats may include health data.", "https://www.delphi.co/privacy"),
+        access: f("ok", "Access Groups, embeds from Builder, email after free messages", "Access Groups set permissions around one mind. Embeds and integrations start on Builder. Anonymous visitors default to 0 messages, then email is required. Collaborators: Builder 1, Scaler 3.", "https://help.delphi.ai/articles/16043910-integrate-your-delphi-on-your-platforms"),
+        where: f("cf", "Hosted in the US. No sub-processor list or model provider named", "The privacy policy says the services are hosted in the United States. It names provider categories only, and no AI model provider is named on the pages read.", "https://www.delphi.co/privacy"),
+        plans: f("ok", "Free, Builder $79, Scaler $299, Immortal custom", "Free: 1M training words. Builder $79 a month: 5M words, 2 embeds. Scaler $299: 12M words, 10 embeds. Immortal: custom, SSO and API. Annual billing saves up to 20%.", "https://www.delphi.co/pricing")
+      }
+    },
+    {
+      id: "chipp", tab: "Chipp", name: "Chipp", by: "Chipp",
+      start: "$299 a month", price: 299,
+      who: { me: [true], team: [true], clients: [true], own: [false, "Not a build-your-own option."] },
+      signin: { plan: "Restricted mode, plan not stated" },
+      voice: null,
+      fields: {
+        training: f("cf", "Its page says both never and with consent", "The same privacy page says \"We will never use your data to train any AI models\" and \"unless you have given explicit consent and permitted by law\". How to give or withdraw consent: not found.", "https://chipp.ai/privacy"),
+        ownership: f("ok", "You own your data, apps and outputs", "You keep all rights in your data and own your apps and their outputs. Chipp's license is to use your data as needed to provide and improve the service.", "https://chipp.ai/terms"),
+        retention: f("cf", "Deleted within 30 days of a request. Agent export not found", "Account data is deleted within 30 days of a deletion request. Chat logs export as CSV or Google Sheets. Export of the agent and its knowledge files: not found.", "https://chipp.ai/docs/guides/analytics"),
+        certs: f("ok", "SOC 2 Type II stated, report on request", "A Chipp post says it achieved SOC 2 Type II. No audit period or auditor is named, and the report is given on request. ISO: not found.", "https://chipp.ai/blog/soc2"),
+        hipaa: f("cf", "BAA on every plan per one page, other pages differ", "Its HIPAA page says a signed BAA is on every plan. Its pricing page lists HIPAA only under Studio Pro. A docs page says embeddings and voice are routed through OpenAI and are not covered, and you must pick a covered model.", "https://chipp.ai/hipaa"),
+        access: f("ok", "Open, sign-up, or approved emails and domains", "Access modes are Open, Encouraged, Required and Restricted to pre-approved emails or domains. Roles: Owner, Admin, Editor, Viewer. Inviting members needs Studio or above.", "https://chipp.ai/docs/guides/access-control"),
+        where: f("cf", "Google Cloud in the US. Its two sub-processor lists differ", "Servers run on Google Cloud in the United States. Models come from Anthropic, OpenAI, Google and xAI through OpenRouter and Stripe's gateway. Two pages list different sub-processors.", "https://chipp.ai/privacy"),
+        plans: f("cf", "Pricing page: $299. Docs still list cheaper plans", "The pricing page shows Studio Pro $299 a month with $100 of usage and unlimited team members. Its docs still list Free and Builder. Whether they are sold: not found.", "https://chipp.ai/pricing")
+      }
+    },
+    {
+      id: "customgpt", tab: "CustomGPT", name: "CustomGPT.ai", by: "CustomGPT.ai",
+      start: "$99 a month", price: 99,
+      who: { me: [true], team: [true], clients: [false, "Public link or widget sharing was not found on its pages."], own: [false, "Not a build-your-own option."] },
+      signin: { plan: "Enterprise plan only" },
+      voice: null,
+      fields: {
+        training: f("cf", "Not in OpenAI training. Its own use not found", "Its security page says your data will not be incorporated into OpenAI training sets. A statement about CustomGPT.ai's own use of your data: not found.", "https://customgpt.ai/security"),
+        ownership: f("nf", "Not found. Terms text is on a third-party site", "Its Terms and Privacy Policy are embedded from a third-party site and were not readable on customgpt.ai.", "https://customgpt.ai/terms-and-conditions/"),
+        retention: f("cf", "Kept until you delete it. Period and export not found", "Its page says it keeps your data until you decide what to do with it, and a form lets you request download or deletion. One page also says files are never stored, which conflicts. Retention period and agent export: not found.", "https://customgpt.ai/security"),
+        certs: f("ok", "SOC 2 Type 2 and GDPR listed", "SOC 2 Type 2 across Security, Availability and Confidentiality, audit May 2025 to May 2026, report dated July 27, 2026. ISO/IEC 42001 is not yet held.", "https://customgpt.ai/security"),
+        hipaa: f("nf", "Not found. A DPA is Enterprise only and is not a BAA", "No HIPAA or BAA statement was found. A data processing agreement is available on Enterprise only.", "https://customgpt.ai/security"),
+        access: f("cf", "Sign-in for outsiders is Enterprise only", "SAML sign-in for outside users and role-based access are Enterprise only. Team members: Standard 3, Premium 5. Public link or widget sharing: not found.", "https://customgpt.ai/pricing/"),
+        where: f("cf", "AWS US East. Built on OpenAI. No sub-processor list", "Its page says it runs in a private cloud on Amazon AWS US East and is built on OpenAI's API. Azure OpenAI and Claude via Bedrock are Enterprise only. No sub-processor list.", "https://customgpt.ai/security"),
+        plans: f("ok", "Standard $99, Premium $499, 7-day trial needs a card", "Standard $99 a month ($89 annual): 10 agents, 1,000 queries, 3 team members. Premium $499 ($449 annual): 25 agents, 5,000 queries, 5 members. The trial needs a card and charges after.", "https://customgpt.ai/pricing/")
+      }
+    },
+    {
+      id: "botpress", tab: "Botpress", name: "Botpress", by: "Botpress",
+      start: "Free, then $150 a month", price: 0,
+      who: { me: [true], team: [true], clients: [true], own: [false, "Not a build-your-own option."] },
+      signin: { plan: "Team plan or higher" },
+      voice: { plan: "Voice channel is on Enterprise" },
+      fields: {
+        training: f("ok", "Never used per its Terms", "Its Terms say conversation data, and analytics derived from it, is never used to train or develop models. Opt-out options: not applicable.", "https://botpress.com/terms"),
+        ownership: f("ok", "You own your bots and your data", "You exclusively own the intellectual property in your bots, and customer data is yours. Botpress takes a license to use, copy, store and display it. Output ownership: not found.", "https://botpress.com/terms"),
+        retention: f("cf", "30 days for logs, 90 for conversations. Export right not found", "Its docs list 30 days for logs and 90 days for conversations, messages and events. The Terms give no express export right and put the duty on you to keep data available outside the platform.", "https://botpress.com/docs/studio/guides/advanced/retention-period/"),
+        certs: f("cf", "SOC 2, HIPAA, GDPR named, no scope", "Its Trust Center lists SOC 2 Type 2, HIPAA, GDPR, CCPA and DORA by name only. No scope, date or report was readable.", "https://trust.botpress.com"),
+        hipaa: f("nf", "HIPAA named. No BAA found", "The Trust Center names HIPAA. No BAA text appears on its Terms, privacy, enterprise or pricing pages.", "https://trust.botpress.com"),
+        access: f("ok", "Allowed domains, access control and roles need Team", "Allowed origins, agent access control and role management need the Team plan or higher. Seats: Free 3, Plus 3, Team unlimited.", "https://botpress.com/docs/studio/get-started/manage-your-agent/control-access/"),
+        where: f("cf", "US or places you pick. Two sub-processor lists differ", "End-user data is stored in the US or places the customer chooses. The privacy policy and the Trust Center list different sub-processors. Residency choices: not found.", "https://botpress.com/privacy"),
+        plans: f("ok", "Free, Plus $150, Team $750 (billed annually)", "Free: 100 conversations, 3 agents, 3 seats. Plus $150 a month billed annually: 250 conversations, $25 of AI usage. Team $750: 1,500 conversations, unlimited seats.", "https://botpress.com/pricing")
+      }
+    },
+    {
+      id: "replit", tab: "Replit", name: "Your own app on Replit", by: "Replit",
+      start: "$20 a month", price: 18,
+      who: { me: [true], team: [true], clients: [true], own: [true] },
+      signin: { plan: "Password or invite-only access needs Pro" },
+      voice: null,
+      fields: {
+        training: f("cf", "Pages differ by plan. Core not stated", "Replit's docs say Pro users can opt out of their content being used to improve its models. Its Commercial Agreement, for Pro and Enterprise, says it will not use your content to train. Core: not stated.", "https://docs.replit.com/legal-and-security-info/model-improvement"),
+        ownership: f("ok", "You keep your rights. Replit gets a license", "You keep your rights in what you submit. Replit may copy, display and modify it and sublicense it to providers, and can access private apps for troubleshooting.", "https://replit.com/terms-of-service"),
+        retention: f("cf", "Deleted per its policy. Export right not found", "Replit deletes stored data under its retention policy after account deletion. Pro and Enterprise get 30 days to move content after termination. The Terms have no export clause.", "https://replit.com/commercial-agreement"),
+        certs: f("ok", "SOC 2 Type II for Replit itself", "Replit says it holds SOC 2 Type II and is working toward ISO 27001. Nothing says this covers the app you build.", "https://replit.com/security"),
+        hipaa: f("nf", "Not found", "No HIPAA or BAA statement was found on the pages read, and its Trust Center did not load. Replit's Terms say you are responsible for your app and for complying with applicable laws.", "https://replit.com/terms-of-service"),
+        access: f("cf", "Password or invite-only needs Pro. Core has none", "Published apps can be Public, Password protected, Workspace only or Invite only, and access controls are for Pro and Enterprise. Builders: Core 5, Pro 15. An end-user login system: not found.", "https://docs.replit.com/build/publish-your-app"),
+        where: f("ok", "US on Google Cloud. Sub-processor list is public", "Replit is hosted mainly in the United States on Google Cloud, with EU hosting for Enterprise. Its public sub-processor list names Anthropic, OpenAI, Google and others.", "https://replit.com/subprocessors"),
+        plans: f("ok", "Core $20 ($18 annual), Pro $100 ($90 annual)", "Core: $20 toward models, up to 5 builders. Pro: $100 toward models, up to 15 builders and 50 viewers. Your app also pays for each AI answer.", "https://replit.com/pricing")
+      }
+    }
+  ];
+
+  var QUESTIONS = {
+    who: { q: "Who uses your GPT?", opts: [["me", "Just me"], ["team", "My team"], ["clients", "My clients or the public"], ["own", "Clients, and I want to build and host my own app"]] },
+    health: { q: "Does the bot handle health information?", opts: [["yes", "Yes"], ["no", "No"], ["unsure", "Not sure yet"]] },
+    signin: { q: "Must outside users sign in or be limited to people you invite?", opts: [["yes", "Yes"], ["no", "No, anyone with the link is fine"]] },
+    soc2: { q: "Must the vendor hold a SOC 2 Type 2 attestation?", opts: [["yes", "Yes"], ["no", "No"]] },
+    voice: { q: "Should people be able to speak to the bot by voice?", opts: [["yes", "Yes"], ["no", "No"]] }
+  };
+
+  var ASK = {
+    who: function (o, a) { return "Can " + (a.who === "me" ? "I use it alone" : a.who === "team" ? "my team use it" : a.who === "own" ? "I build and host it myself" : "my clients use it") + " on " + o.name + ", and on which plan?"; },
+    health: function (o) { return "Will " + o.name + " sign a BAA for the plan I would use, and what does it cover?"; },
+    signin: function (o) { return "How do outside users sign in to " + o.name + ", and on which plan?"; },
+    soc2: function (o) { return "Can " + o.name + " share its SOC 2 Type 2 report and say what it covers?"; },
+    voice: function (o) { return "Can people speak to a bot on " + o.name + " by voice, and on which plan?"; }
+  };
+
+  function stepsFor(a) {
+    var s = ["who", "health"];
+    if (a.who === "clients" || a.who === "own") s.push("signin");
+    s.push("soc2", "voice");
+    return s;
+  }
+
+  function gateFail(o, a) {
+    var fails = [];
+    var w = o.who[a.who];
+    if (w && !w[0]) fails.push({ gate: "who", why: w[1] });
+    if (a.health === "yes" || a.health === "unsure") {
+      var h = o.fields.hipaa.s;
+      if (h === "nf") fails.push({ gate: "health", why: "No BAA was found on its pages." });
+    }
+    if (a.signin === "yes" && !o.signin) fails.push({ gate: "signin", why: "Sign-in or invite-only access was not confirmed on its pages." });
+    if (a.soc2 === "yes") {
+      var c = o.fields.certs.s;
+      if (c !== "ok") fails.push({ gate: "soc2", why: c === "cf" ? "SOC 2 is named without a scope." : "No SOC 2 attestation was found." });
+    }
+    if (a.voice === "yes" && !o.voice) fails.push({ gate: "voice", why: "Voice was not found on its pages." });
+    return fails;
+  }
+
+  function run(a) {
+    var res = OPTIONS.map(function (o) { return { o: o, fails: gateFail(o, a) }; });
+    var survivors = res.filter(function (r) { return r.fails.length === 0; }).map(function (r) { return r.o; });
+    survivors.sort(function (x, y) { return x.price - y.price || (x.name < y.name ? -1 : 1); });
+    var dropped = res.filter(function (r) { return r.fails.length > 0; });
+    var min = dropped.length ? Math.min.apply(null, dropped.map(function (r) { return r.fails.length; })) : 0;
+    var closest = dropped.filter(function (r) { return r.fails.length === min; }).slice(0, 3).map(function (r) {
+      return { o: r.o, fails: r.fails, asks: r.fails.map(function (x) { return ASK[x.gate](r.o, a); }) };
+    });
+    return { survivors: survivors, dropped: dropped, closest: closest, unsure: a.health === "unsure" };
+  }
+
+  return { CHECKED: CHECKED, FIELDS: FIELDS, OPTIONS: OPTIONS, QUESTIONS: QUESTIONS, stepsFor: stepsFor, run: run };
+});
